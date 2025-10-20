@@ -1,72 +1,49 @@
-name: ${APP_NAME}
-
+version: '3.9'
 services:
-  db:
-    image: mysql:${MYSQL_VERSION}
-    command: ["--default-authentication-plugin=mysql_native_password"]
+  api:
+    build: ./backend
+    container_name: engineer_api
+    ports:
+      - "${WEB_PORT}:80"
     environment:
+      TZ: ${TZ}
+      APP_ENV: ${APP_ENV}
+
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT_INTERNAL}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASSWORD}
+
+      DB_ADMIN_USER: ${DB_ADMIN_USER}
+      DB_ADMIN_PASSWORD: ${DB_ADMIN_PASSWORD}
+      ADMIN_TOKEN: ${ADMIN_TOKEN}
+    depends_on: [db]
+    volumes:
+      - ./backend/public:/var/www/html
+      - ./backend/src:/var/www/src
+
+  db:
+    image: "mysql:${MYSQL_VERSION}"
+    container_name: engineer_db
+    command: ["mysqld"]
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ADMIN_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      TZ: ${TZ}
     ports:
-      - "${DB_PORT}:3306"
+      - "${DB_PORT}:3306" 
     volumes:
       - dbdata:/var/lib/mysql
-      - ./db/init:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: ["CMD","mysqladmin","ping","-h","localhost"]
-      interval: 5s
-      timeout: 3s
-      retries: 20
+      - ./db/init.sql:/docker-entrypoint-initdb.d/00-init.sql:ro
 
-  php:
-    build:
-      context: .
-      dockerfile: ./docker/php/Dockerfile
-      args:
-        PHP_VERSION: ${PHP_VERSION}
-    environment:
-      APP_ENV: ${APP_ENV}
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      TZ: ${TZ}
-    volumes:
-      - ./backend:/var/www/html:cached
-    depends_on:
-      db:
-        condition: service_healthy
-
-  frontend:
-    build:
-      context: .
-      dockerfile: ./docker/frontend/Dockerfile
-      args:
-        NODE_VERSION: ${NODE_VERSION}
-    working_dir: /app
-    command: ["npm","run","dev","--","--host","0.0.0.0"]
-    volumes:
-      - ./frontend:/app:cached
-      - /app/node_modules
-    expose:
-      - "5173"
-    environment:
-      - TZ=${TZ}
-
-  nginx:
-    image: nginx:alpine
-    volumes:
-      - ./docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
-      - ./backend/public:/var/www/html/public:ro
+  web:
+    build: ./frontend
+    container_name: engineer_web
     ports:
-      - "${WEB_PORT}:8080"
-    depends_on:
-      - php
-      - frontend
+      - "${WEB_STATIC_PORT}:80"
+    depends_on: [api]
 
 volumes:
   dbdata:
