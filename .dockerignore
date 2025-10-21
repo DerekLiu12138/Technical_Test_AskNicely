@@ -1,6 +1,7 @@
 .git
 .env
 .DS_Store
+.vendor_lock.sha256
 
 frontend/node_modules
 frontend/dist

@@ -5,16 +5,16 @@ services:
     container_name: engineer_api
     ports:
       - "${WEB_PORT}:80"
+    env_file:
+      - .env
     environment:
       TZ: ${TZ}
       APP_ENV: ${APP_ENV}
-
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT_INTERNAL}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASSWORD}
-
       DB_ADMIN_USER: ${DB_ADMIN_USER}
       DB_ADMIN_PASSWORD: ${DB_ADMIN_PASSWORD}
       ADMIN_TOKEN: ${ADMIN_TOKEN}
@@ -58,7 +58,7 @@ services:
     depends_on:
       - api
     environment:
-      - VITE_API_BASE=http://api
+      - VITE_API_BASE=/api 
     restart: unless-stopped
     volumes:
       - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
@@ -68,25 +68,49 @@ services:
     image: node:20-alpine
     container_name: engineer_frontend
     working_dir: /usr/src/app
+    user: root
+    env_file:
+      - .env
     environment:
       - CI=1
-      - VITE_API_BASE=http://host.docker.internal:${WEB_PORT}
+      - VITE_API_BASE=http://host.docker.internal:${WEB_PORT}/api
+      - CHOKIDAR_USEPOLLING=true
+      - npm_config_fund=false
+      - npm_config_audit=false
     ports:
-      - "5173:5173"  # expose Vite dev server
+      - "5173:5173"
     volumes:
       - ./frontend:/usr/src/app
       - node_modules_frontend:/usr/src/app/node_modules
     command: >
-      sh -lc "
-        set -e;
-        if [ ! -d node_modules ]; then
-          echo '📦 Installing dependencies...';
-          npm ci --no-audit --no-fund || npm install --no-audit --no-fund;
+      sh -lc '
+        set -e
+        LOCK=package-lock.json
+        CACHE_DIR=node_modules
+        HASH_FILE="$$CACHE_DIR/.lockhash"
+        VITE_BIN="$$CACHE_DIR/.bin/vite"
+
+        # Install deps if cache missing/broken
+        if [ ! -d "$$CACHE_DIR" ] || [ ! -x "$$VITE_BIN" ] || [ ! -f "$$HASH_FILE" ] || ! sha256sum -c "$$HASH_FILE" >/dev/null 2>&1; then
+          echo "Installing dependencies (or repairing cache)..."
+          if [ -f "$$LOCK" ]; then
+            npm ci --no-audit --no-fund
+            sha256sum "$$LOCK" > "$$HASH_FILE"
+          else
+            npm install --no-audit --no-fund
+          fi
         else
-          echo '✅ Using cached node_modules';
-        fi;
-        npm run dev -- --host 0.0.0.0 --port 5173
-      "
+          echo "Using cached node_modules"
+        fi
+
+        echo "▶Starting Vite dev server on 0.0.0.0:5173 ..."
+        exec npm run dev -- --host 0.0.0.0 --port 5173 --strictPort
+      '
+    healthcheck:
+      test: ["CMD-SHELL","wget -qO- http://127.0.0.1:5173/ >/dev/null 2>&1 || exit 1"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
     restart: unless-stopped
     depends_on:
       - api

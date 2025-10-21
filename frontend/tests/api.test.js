@@ -30,7 +30,7 @@ describe('api', () => {
     global.fetch.mockResolvedValueOnce(new Response(JSON.stringify({ ok: true }), { status: 200 }));
     await api.updateEmail(7, 'x@y.com');
     const [url, init] = global.fetch.mock.calls[0];
-    expect(String(url)).toContain('/api/employees/7/email');
+    expect(String(url)).toContain('/employees/7/email');
     expect(init.method).toBe('PATCH');
     expect(JSON.parse(init.body)).toEqual({ email: 'x@y.com' });
   });

@@ -2,7 +2,6 @@
   <section class="card">
     <div class="row between">
       <h2 id="avg-title">Average Salary by Company</h2>
-      <!-- No manual refresh button -->
     </div>
 
     <table class="table" aria-labelledby="avg-title">
