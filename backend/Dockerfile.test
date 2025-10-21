@@ -1,4 +1,3 @@
-# backend/Dockerfile.test  （测试用）
 FROM php:8.2-cli
 
 RUN set -eux; \

@@ -1,16 +1,12 @@
-# --- Git 与缓存 ---
 .git
 .gitignore
 .phpunit.result.cache
 .cache
 
-# --- Vendor 与 Node 模块 ---
 /vendor
 /node_modules
 
-# --- 环境文件 ---
 .env
 
-# --- IDE 文件 ---
 .vscode
 .idea
