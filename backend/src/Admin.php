@@ -56,7 +56,6 @@ final class AdminService {
     $pdo = $this->adminPdo();
     // 1) create database & user (if not exists)
     $pdo->exec("CREATE DATABASE IF NOT EXISTS `$dbName` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci");
-    // '%' 允许来自容器网络的连接（生产可收紧成具体网段）
     $pdo->exec("CREATE USER IF NOT EXISTS '$user'@'%' IDENTIFIED BY '$pass'");
     $pdo->exec("GRANT ALL PRIVILEGES ON `$dbName`.* TO '$user'@'%'");
     $pdo->exec("FLUSH PRIVILEGES");

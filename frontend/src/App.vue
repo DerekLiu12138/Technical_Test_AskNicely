@@ -1,8 +1,7 @@
 <template>
   <main class="wrap">
     <header class="topbar">
-      <h1>Engineer Test</h1>
-      <small class="muted">PHP + MySQL + Vue</small>
+      <h1>Engineer Test AskNicely</h1>
     </header>
 
     <UploadCsv :uploading="uploading" :result="importResult" @upload="handleUpload"/>
