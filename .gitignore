@@ -1,4 +1,5 @@
 .env
+.vendor_lock.sha256
 .DS_Store
 node_modules/
 frontend/node_modules/
