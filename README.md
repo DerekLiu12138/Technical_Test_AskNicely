@@ -5,6 +5,33 @@ This repository implements a **full-stack PHP + MySQL + Vue** web application fo
 
 ------
 
+## ⚙️ Environment Configuration (`.env`)
+APP_NAME=Technical_Test_Asknicely
+TZ=Pacific/Auckland
+APP_ENV=dev
+APP_VERSION=1.0.0
+PHP_VERSION=8.2
+NODE_VERSION=20
+MYSQL_VERSION=8.0
+
+# Web Server Ports
+WEB_PORT=8088         
+WEB_STATIC_PORT=8089 
+
+# Database configuration
+DB_HOST=db
+DB_PORT=3307            
+DB_PORT_INTERNAL=3306
+DB_NAME=asknicely_test
+DB_USER=asknicely_user
+DB_PASSWORD=asknicely_password
+DB_ADMIN_USER=asknicely_root
+DB_ADMIN_PASSWORD=asknicely_rootpassword
+
+ADMIN_TOKEN=OaR4e2_C5JpW1JkQz8M0pVx9rY
+
+------
+
 ## 📘 Table of Contents
 
 1. Overview
