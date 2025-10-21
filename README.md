@@ -6,6 +6,7 @@ This repository implements a **full-stack PHP + MySQL + Vue** web application fo
 ------
 
 ## ⚙️ Environment Configuration (`.env`)
+```bash
 APP_NAME=Technical_Test_Asknicely
 TZ=Pacific/Auckland
 APP_ENV=dev
@@ -29,6 +30,7 @@ DB_ADMIN_USER=asknicely_root
 DB_ADMIN_PASSWORD=asknicely_rootpassword
 
 ADMIN_TOKEN=OaR4e2_C5JpW1JkQz8M0pVx9rY
+```
 
 ------
 
