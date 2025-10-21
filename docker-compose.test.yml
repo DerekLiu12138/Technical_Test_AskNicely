@@ -1,8 +1,7 @@
-version: "3.9"
-
 volumes:
   vendor_cache: {}
   composer_cache: {}
+  node_modules_cache: {}
 
 services:
   test_db:
@@ -24,7 +23,6 @@ services:
       timeout: 2s
       retries: 40
 
-  # Responsible solely for executing `composer install` and writing the vendor directory to the named volume; manually run once when composer.json/lock changes.
   deps:
     build:
       context: ./backend
@@ -74,3 +72,43 @@ services:
         set -euo pipefail;
         ./vendor/bin/phpunit --configuration phpunit.xml
       '
+
+  # Frontend unit-test runner (Vitest) 
+  frontend-test:
+    image: node:20-alpine
+    container_name: engineer_frontend_test
+    working_dir: /usr/src/app
+    environment:
+      - CI=1
+      - VITE_API_BASE=http://host.docker.internal:8089
+      - npm_config_fund=false
+      - npm_config_audit=false
+    volumes:
+      - ./frontend:/usr/src/app
+      - node_modules_cache:/usr/src/app/node_modules
+    command: >
+      sh -lc '
+        set -e;
+        LOCK=package-lock.json;
+        CACHE_DIR=/usr/src/app/node_modules;
+        HASH_FILE="$CACHE_DIR/.lockhash";
+
+        
+        if [ ! -d "$CACHE_DIR" ] || [ ! -f "$HASH_FILE" ] || ! sha256sum -c "$HASH_FILE" >/dev/null 2>&1; then
+          echo "📦 Installing dependencies (cache miss or lock changed)...";
+          if [ -f "$LOCK" ]; then
+            npm ci --no-audit --no-fund;
+          else
+            npm install --no-audit --no-fund;
+          fi
+       
+          if [ -f "$LOCK" ]; then
+            sha256sum "$LOCK" > "$HASH_FILE";
+          fi
+        else
+          echo "Dependencies up-to-date (cache hit)";
+        fi;
+
+        npm run test
+      '
+
