@@ -7,16 +7,16 @@ This repository implements a **full-stack PHP + MySQL + Vue** web application fo
 
 ## 📘 Table of Contents
 
-1. [Overview]
-2. [Tech Stack]
-3. [Project Structure]
-4. [Core Features]
-5. [Setup & Run (Docker + Makefile)]
-6. [Database Schema]
-7. [API Endpoints]
-8. [Testing (PHPUnit)]
-9. [Development Workflow]
-10. [Future Improvements]
+1. Overview
+2. Tech Stack
+3. Project Structure
+4. Core Features
+5. Setup & Run (Docker + Makefile)
+6. Database Schema
+7. API Endpoints
+8. Testing (PHPUnit)
+9. Development Workflow
+10. Future Improvements
 
 ------
 
