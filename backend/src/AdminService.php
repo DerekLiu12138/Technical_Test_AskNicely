@@ -1,5 +1,9 @@
 <?php
-require_once __DIR__.'/bootstrap.php';
+
+namespace App;
+
+use PDO;
+use Throwable;
 
 /**
  * Admin-only DB bootstrapper.
