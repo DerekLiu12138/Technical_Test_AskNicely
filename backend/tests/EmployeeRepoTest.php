@@ -1,5 +1,11 @@
 <?php
+
+namespace Tests;
 use PHPUnit\Framework\TestCase;
+use App\CompanyRepo;
+use InvalidArgumentException;
+use App\EmployeeRepo;
+
 
 final class EmployeeRepoTest extends TestCase {
   protected function setUp(): void {

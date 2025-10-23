@@ -25,6 +25,7 @@ services:
       - ./backend/src:/var/www/src
       - ./backend/config:/var/www/config
       - ./backend/tests:/var/www/tests
+      - ./backend/vendor:/var/www/vendor
     restart: unless-stopped
 
   # Database (MySQL)

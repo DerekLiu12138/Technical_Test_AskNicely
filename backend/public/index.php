@@ -1,8 +1,15 @@
 <?php
-require_once __DIR__.'/../src/bootstrap.php';
-require_once __DIR__.'/../src/CsvImporter.php';
-require_once __DIR__.'/../src/Repositories.php';
-require_once __DIR__.'/../src/Admin.php';
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../src/bootstrap.php';
+
+use App\AdminService;
+use App\CsvImporter;
+use App\EmployeeRepo;
+use App\CompanyRepo;
+
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
@@ -34,7 +41,8 @@ try {
 
   if ($path === '/api/employees' && $method === 'GET') {
     $repo = new EmployeeRepo();
-    json($repo->all());
+    $data = $repo->all();
+    json(is_array($data) ? $data : []);
   }
 
   if (preg_match('#^/api/employees/(\\d+)/email$#', $path, $m) && $method === 'PATCH') {
@@ -47,7 +55,8 @@ try {
 
   if ($path === '/api/companies/avg-salary' && $method === 'GET') {
     $repo = new EmployeeRepo();
-    json($repo->avgSalaryByCompany());
+    $data = $repo->avgSalaryByCompany();
+    json(is_array($data) ? $data : []);
   }
 
   http_response_code(404);

@@ -1,17 +1,11 @@
 <?php
-require_once __DIR__.'/bootstrap.php';
+declare(strict_types=1);
 
-class CompanyRepo {
-  public function upsertIdByName(string $name): int {
-    $pdo = pdo_factory();
-    $pdo->prepare('INSERT IGNORE INTO companies(name) VALUES (?)')->execute([$name]);
-    $stmt = $pdo->prepare('SELECT id FROM companies WHERE name=?');
-    $stmt->execute([$name]);
-    return (int)$stmt->fetchColumn();
-  }
-}
+namespace App;
+use InvalidArgumentException;
 
-class EmployeeRepo {
+
+final class EmployeeRepo {
   public function upsert(array $row): void {
     // $row: [company, name, email, salary]
     $companyId = (new CompanyRepo())->upsertIdByName($row['company']);
@@ -27,7 +21,8 @@ class EmployeeRepo {
     $sql = 'SELECT e.id, c.name as company, e.name, e.email, e.salary
             FROM employees e JOIN companies c ON e.company_id = c.id
             ORDER BY c.name, e.name';
-    return $pdo->query($sql)->fetchAll();
+    $stmt = $pdo->query($sql);
+    return $stmt ? $stmt->fetchAll() : [];
   }
 
   public function updateEmail(int $id, string $email): void {
@@ -42,6 +37,7 @@ class EmployeeRepo {
             FROM employees e JOIN companies c ON e.company_id = c.id
             GROUP BY c.id, c.name
             ORDER BY c.name';
-    return $pdo->query($sql)->fetchAll();
+    $stmt = $pdo->query($sql);
+    return $stmt ? $stmt->fetchAll() : []; 
   }
 }

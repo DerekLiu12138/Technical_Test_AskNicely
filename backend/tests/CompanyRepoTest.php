@@ -1,5 +1,8 @@
 <?php
+
+namespace Tests;
 use PHPUnit\Framework\TestCase;
+use App\CompanyRepo;
 
 final class CompanyRepoTest extends TestCase {
   protected function setUp(): void {
