@@ -4,7 +4,6 @@
 node_modules/
 frontend/node_modules/
 frontend/dist/
-vendor/*
-!vendor/autoload.php
-!vendor/composer/
-
+backend/vendor/*
+!backend/vendor/autoload.php
+!backend/vendor/composer/
