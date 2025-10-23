@@ -32,12 +32,7 @@ require_once __DIR__ . '/../src/bootstrap.php';
 use App\EmployeeRepo;
 use App\CompanyRepo;
 use App\CsvImporter;
-use Throwable;
-use RuntimeException;
-use InvalidArgumentException;
-use PDO;
 use App\AdminService;
-use App;
 // ---------- 4) Waiting for MySQL (forced TCP, not via UNIX socket) ----------
 $ok = false; $firstErr = null;
 for ($i = 0; $i < 90; $i++) {
